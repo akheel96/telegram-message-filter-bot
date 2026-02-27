@@ -1,10 +1,12 @@
 # Render deployment configuration
+# Deploy as FREE Web Service (not Background Worker which is paid)
 # See: https://render.com/docs/blueprint-spec
 
 services:
-  - type: worker
+  - type: web
     name: telegram-loot-filter-bot
     runtime: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python bot.py
     autoDeploy: true
@@ -17,6 +19,8 @@ services:
       - key: SOURCE_CHANNEL_IDS
         sync: false
       - key: DESTINATION_CHANNEL_ID
+        sync: false
+      - key: SESSION_STRING
         sync: false
       
       # Optional - Keywords to filter (comma-separated)
@@ -50,7 +54,3 @@ services:
       # Logging
       - key: LOG_LEVEL
         value: INFO
-      
-      # Python version
-      - key: PYTHON_VERSION
-        value: "3.11.0"

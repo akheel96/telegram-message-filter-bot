@@ -1,8 +1,8 @@
 # 🤖 Telegram Loot Filter Bot
 
-A production-ready Telegram bot that monitors **multiple channels** for messages containing **deal keywords**, extracts product information from Amazon/Flipkart/Myntra URLs, filters out-of-stock items, and forwards clean, formatted deal alerts to your destination channel.
+A production-ready Telegram bot that monitors **multiple channels** for deal keywords, extracts product information from Amazon/Flipkart/Myntra URLs, and forwards clean, formatted deal alerts to your destination channel.
 
-Built with **Python 3.11+**, **Telethon**, and **aiohttp** for high-performance async processing.
+**Free deployment on Render** with built-in keep-alive support.
 
 ---
 
@@ -23,16 +23,10 @@ Built with **Python 3.11+**, **Telethon**, and **aiohttp** for high-performance 
 - 🌐 **Generic Scraper** - Basic product info from unknown e-commerce sites
 
 ### Smart Filtering
-- ✅ **Stock Checking** - Optionally skip out-of-stock products
-- 📄 **Listing Page Detection** - Skip search/category pages (not single products)
+- ✅ **Stock Checking** - Skip out-of-stock products
+- 📄 **Listing Page Detection** - Skip search/category pages
 - 🚫 **Site Filtering** - Skip specific sites (e.g., AJIO)
 - ⚡ **Fast Mode** - Reduced timeouts for time-sensitive deals
-
-### Performance Optimizations
-- ⏱️ **Fast URL Expansion** - 5-8s for shortened URLs
-- 🚀 **Skip Direct URLs** - No expansion needed for direct product links
-- 💨 **Fast Mode** - 10s max timeout for quick processing
-- ⏭️ **Skip Extraction Mode** - Maximum speed (~5s) for flash sales
 
 ---
 
@@ -61,7 +55,6 @@ Built with **Python 3.11+**, **Telethon**, and **aiohttp** for high-performance 
 │                    │ • Keyword matching     │                               │
 │                    │ • URL presence check   │                               │
 │                    │ • Skip patterns        │                               │
-│                    │ • Duplicate detection  │                               │
 │                    └───────────┬────────────┘                               │
 │                                │                                            │
 │                    ┌───────────┴───────────┐                                │
@@ -69,7 +62,6 @@ Built with **Python 3.11+**, **Telethon**, and **aiohttp** for high-performance 
 │                    │ • URL extraction      │                                │
 │                    │ • Shortlink expansion │                                │
 │                    │ • Affiliate removal   │                                │
-│                    │ • Indian URL convert  │                                │
 │                    └───────────┬───────────┘                                │
 │                                │                                            │
 │              ┌─────────────────┼─────────────────┐                          │
@@ -78,128 +70,22 @@ Built with **Python 3.11+**, **Telethon**, and **aiohttp** for high-performance 
 │     ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                   │
 │     │   AMAZON     │  │  FLIPKART    │  │   MYNTRA     │                   │
 │     │   Handler    │  │   Handler    │  │   Handler    │                   │
-│     │ • Mobile API │  │ • API/HTML   │  │ • pdpData    │                   │
-│     │ • HTML parse │  │ • URL parse  │  │ • API parse  │                   │
 │     └──────┬───────┘  └──────┬───────┘  └──────┬───────┘                   │
 │            │                 │                 │                            │
 │            └─────────────────┼─────────────────┘                            │
 │                              ▼                                              │
 │                    ┌────────────────────────┐                               │
-│                    │   PRODUCT HANDLER      │                               │
-│                    │ • Platform routing     │                               │
-│                    │ • Generic fallback     │                               │
-│                    │ • Stock validation     │                               │
-│                    └───────────┬────────────┘                               │
-│                                │                                            │
-│                                ▼                                            │
-│                    ┌────────────────────────┐                               │
 │                    │   MESSAGE FORMATTER    │                               │
 │                    │ • Price formatting     │                               │
 │                    │ • Discount highlight   │                               │
-│                    │ • Emoji decoration     │                               │
 │                    └───────────┬────────────┘                               │
 │                                │                                            │
 │                                ▼                                            │
 │                    ┌────────────────────────┐                               │
 │                    │  DESTINATION CHANNEL   │                               │
-│                    │   (Your Deal Alerts)   │                               │
 │                    └────────────────────────┘                               │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 📁 Project Structure
-
-```
-telegram-message-filter-bot/
-├── src/
-│   ├── __init__.py           # Package marker
-│   ├── config.py             # Configuration management (env vars)
-│   ├── filter.py             # Keyword filtering & duplicate detection
-│   ├── listener.py           # Message event handler & forwarding
-│   ├── url_handler.py        # URL extraction, expansion, cleaning
-│   ├── product_handler.py    # Product info orchestrator
-│   ├── formatter.py          # Message formatting for Telegram
-│   └── platforms/            # Platform-specific handlers
-│       ├── __init__.py       # Platform exports
-│       ├── base.py           # Base class & ProductInfo dataclass
-│       ├── amazon.py         # Amazon scraper (mobile/desktop)
-│       ├── flipkart.py       # Flipkart API/scraper
-│       └── myntra.py         # Myntra API/scraper
-├── bot.py                    # Main entry point
-├── auth.py                   # Telegram authentication script
-├── get_ids.py                # Channel ID discovery tool
-├── requirements.txt          # Python dependencies
-├── Dockerfile                # Docker container config
-├── render.yaml               # Render deployment blueprint
-├── Procfile                  # Heroku/Render process file
-├── runtime.txt               # Python version specification
-├── env.example.txt           # Example environment variables
-└── README.md                 # This file
-```
-
----
-
-## 🔄 Message Processing Flow
-
-```
-Message Received
-       │
-       ▼
-┌──────────────────┐
-│ Has URL?         │──No──► Skip
-└────────┬─────────┘
-         │Yes
-         ▼
-┌──────────────────┐
-│ Contains keyword?│──No──► Skip
-└────────┬─────────┘
-         │Yes
-         ▼
-┌──────────────────┐
-│ Skip pattern?    │──Yes─► Skip (AJIO, etc.)
-└────────┬─────────┘
-         │No
-         ▼
-┌──────────────────┐
-│ Listing page?    │──Yes─► Skip (if SKIP_LISTING_PAGES=true)
-└────────┬─────────┘
-         │No
-         ▼
-┌──────────────────┐
-│ Duplicate?       │──Yes─► Skip
-└────────┬─────────┘
-         │No
-         ▼
-┌──────────────────────────────────┐
-│ SKIP_PRODUCT_EXTRACTION=true?   │──Yes──► Forward with clean URL
-└────────┬─────────────────────────┘
-         │No
-         ▼
-┌──────────────────┐
-│ Extract product  │
-│ info from URL    │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│ Out of stock?    │──Yes─► Skip (if SKIP_OUT_OF_STOCK=true)
-└────────┬─────────┘
-         │No/Unknown
-         ▼
-┌──────────────────┐
-│ Format message   │
-│ with product     │
-│ details          │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│ Forward to       │
-│ destination      │
-└──────────────────┘
 ```
 
 ---
@@ -208,70 +94,105 @@ Message Received
 
 ### Prerequisites
 - Python 3.9+ (3.11 recommended)
-- pip (Python package manager)
 - Telegram account
+- [Render](https://render.com) account (free)
+- [UptimeRobot](https://uptimerobot.com) account (free) - to keep bot awake
 
-### Local Setup
-
-```bash
-# 1. Clone repository
-git clone https://github.com/yourusername/telegram-message-filter-bot.git
-cd telegram-message-filter-bot
-
-# 2. Create virtual environment
-python -m venv venv
-
-# 3. Activate virtual environment
-# Windows PowerShell:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# 4. Install dependencies
-pip install -r requirements.txt
-
-# 5. Create .env file (copy from example)
-cp env.example.txt .env
-# Edit .env with your credentials
-
-# 6. Authenticate with Telegram (one-time)
-python auth.py
-
-# 7. Run the bot
-python bot.py
-```
-
----
-
-## 🔐 Getting Telegram Credentials
-
-### Step 1: Create API Credentials
+### Step 1: Get Telegram API Credentials
 
 1. Go to [my.telegram.org](https://my.telegram.org/)
 2. Log in with your phone number
 3. Click **"API development tools"**
-4. Fill the form:
-   - App title: `Loot Filter Bot`
-   - Short name: `lootbot`
-   - Platform: `Desktop`
-5. Save your **API_ID** and **API_HASH**
+4. Create an application and save your **API_ID** and **API_HASH**
 
 ### Step 2: Get Channel IDs
 
-**Method 1: Using Web Telegram**
 1. Open [web.telegram.org](https://web.telegram.org/)
 2. Navigate to the channel
-3. URL shows the ID: `https://web.telegram.org/k/#-1001234567890`
+3. The URL shows the ID: `https://web.telegram.org/k/#-1001234567890`
 
-**Method 2: Using the helper script**
+Or use the helper script locally:
 ```bash
 python get_ids.py
 ```
-This lists all your chats with their IDs.
 
-**Method 3: Forward to @userinfobot**
-1. Forward any message from the channel to [@userinfobot](https://t.me/userinfobot)
-2. The bot replies with the channel ID
+### Step 3: Generate String Session
+
+Run locally to generate a session for cloud deployment:
+
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/telegram-message-filter-bot.git
+cd telegram-message-filter-bot
+
+# Setup
+python -m venv venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # macOS/Linux
+
+pip install -r requirements.txt
+
+# Create .env with your API_ID and API_HASH
+cp .env.example .env
+# Edit .env with your credentials
+
+# Generate StringSession
+python generate_string_session.py
+```
+
+**Copy the output string** - you'll need it for Render.
+
+### Step 4: Deploy to Render (FREE)
+
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git push origin main
+   ```
+
+2. **Create Render Account** at [render.com](https://render.com)
+
+3. **New Web Service**:
+   - Click **"New"** → **"Web Service"**
+   - Connect your GitHub repository
+   - Select the repository
+
+4. **Configure Settings**:
+   - **Name**: `telegram-loot-filter-bot`
+   - **Region**: Pick closest to you
+   - **Branch**: `main`
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `python bot.py`
+   - **Plan**: **Free**
+
+5. **Add Environment Variables** (click "Add Environment Variable"):
+
+   | Key | Value |
+   |-----|-------|
+   | `API_ID` | Your Telegram API ID |
+   | `API_HASH` | Your Telegram API Hash |
+   | `SOURCE_CHANNEL_IDS` | `-1001234567890` (comma-separated for multiple) |
+   | `DESTINATION_CHANNEL_ID` | `-1009876543210` |
+   | `SESSION_STRING` | The string from Step 3 |
+   | `FILTER_KEYWORDS` | `loot,deal,offer` |
+
+6. **Deploy** - Click "Create Web Service"
+
+### Step 5: Keep Bot Awake with UptimeRobot
+
+Render's free tier sleeps after 15 minutes of inactivity. Use UptimeRobot to keep it awake:
+
+1. **Create UptimeRobot Account** at [uptimerobot.com](https://uptimerobot.com) (free)
+
+2. **Add New Monitor**:
+   - **Monitor Type**: HTTP(s)
+   - **Friendly Name**: `Loot Bot Keep-Alive`
+   - **URL**: `https://your-app-name.onrender.com/health`
+   - **Monitoring Interval**: `5 minutes`
+
+3. **Create Monitor** - UptimeRobot will ping your bot every 5 minutes, keeping it awake 24/7!
 
 ---
 
@@ -279,12 +200,13 @@ This lists all your chats with their IDs.
 
 ### Required Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `API_ID` | Telegram API ID from [my.telegram.org](https://my.telegram.org) | `12345678` |
-| `API_HASH` | Telegram API Hash | `abc123def456...` |
-| `SOURCE_CHANNEL_IDS` | Channel IDs to monitor (comma-separated) | `-1001234567890,-1009876543210` |
-| `DESTINATION_CHANNEL_ID` | Channel to forward deals to | `-1009876543210` |
+| Variable | Description |
+|----------|-------------|
+| `API_ID` | Telegram API ID from [my.telegram.org](https://my.telegram.org) |
+| `API_HASH` | Telegram API Hash |
+| `SOURCE_CHANNEL_IDS` | Channel IDs to monitor (comma-separated) |
+| `DESTINATION_CHANNEL_ID` | Channel to forward deals to |
+| `SESSION_STRING` | StringSession from `generate_string_session.py` |
 
 ### Optional Environment Variables
 
@@ -298,132 +220,42 @@ This lists all your chats with their IDs.
 | `SKIP_OUT_OF_STOCK` | `true` | Skip out-of-stock products |
 | `SKIP_LISTING_PAGES` | `false` | Skip category/search pages |
 | `SKIP_SITES_TEXT` | `ajio,ajiio` | Skip messages containing these |
-| `ENABLE_GENERIC_SCRAPER` | `true` | Scrape unknown sites |
-| `PREFER_INDIAN_URLS` | `true` | Convert to Indian domains |
-| `DISCOUNT_HIGHLIGHT_THRESHOLD` | `50` | Highlight discounts above this % |
-| `SESSION_NAME` | `loot_filter_bot` | Telegram session file name |
-| `CACHE_SIZE` | `1000` | Duplicate detection cache size |
-| `RECONNECT_DELAY` | `5` | Seconds between reconnect attempts |
-| `MAX_RETRIES` | `10` | Max reconnection attempts |
 | `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING) |
-
-### Performance Tuning
-
-For **time-sensitive flash deals** (items sell out in seconds):
-```env
-FAST_MODE=true
-SKIP_PRODUCT_EXTRACTION=true  # ~5s processing
-HTTP_TIMEOUT=10
-```
-
-For **full product information**:
-```env
-FAST_MODE=true
-SKIP_PRODUCT_EXTRACTION=false  # ~10s processing
-HTTP_TIMEOUT=15
-```
 
 ---
 
-## ☁️ Deployment
+## 📁 Project Structure
 
-### Render (Recommended)
-
-1. **Fork/Push** this repository to GitHub
-
-2. **Create Render Account** at [render.com](https://render.com)
-
-3. **New Background Worker**:
-   - Click "New" → "Background Worker"
-   - Connect your GitHub repository
-   - Select branch (usually `main`)
-
-4. **Configure Settings**:
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `python bot.py`
-
-5. **Add Environment Variables**:
-   Add all required variables from the table above.
-
-6. **Session File**: For the Telegram session, either:
-   - Run `auth.py` locally and commit the `.session` file
-   - Use StringSession (see below)
-
-7. **Deploy** - Render will build and start your bot
-
-### Using render.yaml (Blueprint)
-
-This repo includes a `render.yaml` for one-click deployment:
-
-```yaml
-services:
-  - type: worker
-    name: telegram-loot-filter-bot
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python bot.py
 ```
-
-### Docker
-
-```bash
-# Build image
-docker build -t loot-filter-bot .
-
-# Run container
-docker run -d \
-  --name loot-bot \
-  --restart unless-stopped \
-  -e API_ID=your_api_id \
-  -e API_HASH=your_api_hash \
-  -e SOURCE_CHANNEL_IDS=-1001234567890 \
-  -e DESTINATION_CHANNEL_ID=-1009876543210 \
-  -e FILTER_KEYWORDS=loot,deal \
-  -v $(pwd):/app \
-  loot-filter-bot
-```
-
-### Using StringSession (For Cloud)
-
-For serverless/cloud deployments where you can't persist files:
-
-```python
-# Run locally to generate StringSession
-from telethon.sessions import StringSession
-from telethon import TelegramClient
-import asyncio
-
-async def get_string_session():
-    # Replace with your credentials
-    API_ID = 12345678
-    API_HASH = "your_api_hash"
-    
-    client = TelegramClient(StringSession(), API_ID, API_HASH)
-    await client.start()
-    print("Your StringSession:")
-    print(client.session.save())  # Copy this output
-
-asyncio.run(get_string_session())
-
-# Then set environment variable:
-# SESSION_STRING=your_string_session_here
+telegram-message-filter-bot/
+├── src/
+│   ├── __init__.py           # Package marker
+│   ├── config.py             # Configuration management
+│   ├── filter.py             # Keyword filtering & duplicate detection
+│   ├── listener.py           # Message event handler & forwarding
+│   ├── url_handler.py        # URL extraction, expansion, cleaning
+│   ├── product_handler.py    # Product info orchestrator
+│   ├── formatter.py          # Message formatting for Telegram
+│   └── platforms/            # Platform-specific handlers
+│       ├── base.py           # Base class & ProductInfo dataclass
+│       ├── amazon.py         # Amazon scraper
+│       ├── flipkart.py       # Flipkart scraper
+│       └── myntra.py         # Myntra scraper
+├── bot.py                    # Main entry point (with HTTP server)
+├── auth.py                   # Telegram authentication script
+├── get_ids.py                # Channel ID discovery tool
+├── generate_string_session.py # StringSession generator
+├── requirements.txt          # Python dependencies
+├── render.yaml               # Render deployment config
+├── Procfile                  # Process file for Render
+├── Dockerfile                # Docker config (optional)
+├── .env.example              # Example environment variables
+└── README.md                 # This file
 ```
 
 ---
 
 ## 📊 Sample Output
-
-### Startup Logs
-```
-2024-02-27 10:00:00 | INFO     | ============================================================
-2024-02-27 10:00:00 | INFO     | 🤖 Telegram Loot Filter Bot Starting...
-2024-02-27 10:00:00 | INFO     | Configuration loaded successfully
-2024-02-27 10:00:00 | INFO     | Source Channels: [-1001234567890, -1009876543210]
-2024-02-27 10:00:00 | INFO     | Filter Keywords: {'loot', 'deal', 'offer'}
-2024-02-27 10:00:00 | INFO     | Fast Mode: Enabled
-2024-02-27 10:00:01 | INFO     | ✅ Successfully connected to Telegram!
-2024-02-27 10:00:01 | INFO     | 🎯 Bot is now running and monitoring for messages!
-```
 
 ### Formatted Deal Message
 ```
@@ -449,35 +281,54 @@ asyncio.run(get_string_session())
 
 ## 🛠️ Troubleshooting
 
-### "ModuleNotFoundError"
-Ensure virtual environment is activated and dependencies are installed:
-```bash
-venv\Scripts\activate  # or: source venv/bin/activate
-pip install -r requirements.txt
-```
+### Bot goes to sleep on Render
+Make sure you've set up UptimeRobot (Step 5) to ping `/health` every 5 minutes.
 
 ### "Client is not authorized"
-Run authentication script:
+Regenerate your StringSession:
 ```bash
-python auth.py
+python generate_string_session.py
 ```
+Then update `SESSION_STRING` in Render.
 
 ### "Cannot access channel"
 - Verify you're a member of the channel
 - Check channel ID format (should start with `-100`)
-- Ensure bot account has required permissions
 
-### "FloodWaitError"
-Telegram rate limit - bot will automatically wait and retry.
-
-### "Session expired"
-Delete `.session` file and re-run `auth.py`.
+### Messages not being forwarded
+- Check that messages contain your keywords (case-insensitive)
+- Check Render logs: Dashboard → your service → Logs
 
 ### Slow processing
-Enable fast mode in `.env`:
-```env
+Enable fast mode in Render environment:
+```
 FAST_MODE=true
 SKIP_PRODUCT_EXTRACTION=true
+```
+
+---
+
+## 🏠 Local Development
+
+For testing locally before deploying:
+
+```bash
+# Clone and setup
+git clone https://github.com/yourusername/telegram-message-filter-bot.git
+cd telegram-message-filter-bot
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+
+# Configure
+cp .env.example .env
+# Edit .env with your credentials
+
+# Authenticate (creates .session file)
+python auth.py
+
+# Run
+python bot.py
 ```
 
 ---
@@ -485,14 +336,6 @@ SKIP_PRODUCT_EXTRACTION=true
 ## 📜 License
 
 MIT License - feel free to use and modify!
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ---
 
