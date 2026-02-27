@@ -1,0 +1,43 @@
+# Docker ignore file
+# Exclude files not needed in the Docker image
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Environment files (set via Docker env vars)
+.env
+.env.*
+
+# Session files (mount separately or use StringSession)
+*.session
+*.session-journal
+
+# Documentation
+README.md
+docs/
+
+# Development files
+*.log
+*.md
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,56 @@
+# Render deployment configuration
+# See: https://render.com/docs/blueprint-spec
+
+services:
+  - type: worker
+    name: telegram-loot-filter-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    autoDeploy: true
+    envVars:
+      # Required - Set these in the Render dashboard
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: SOURCE_CHANNEL_IDS
+        sync: false
+      - key: DESTINATION_CHANNEL_ID
+        sync: false
+      
+      # Optional - Keywords to filter (comma-separated)
+      - key: FILTER_KEYWORDS
+        value: loot,deal,offer
+      
+      # Performance settings
+      - key: FAST_MODE
+        value: "true"
+      - key: HTTP_TIMEOUT
+        value: "15"
+      - key: SKIP_PRODUCT_EXTRACTION
+        value: "false"
+      
+      # Filtering options
+      - key: SKIP_OUT_OF_STOCK
+        value: "true"
+      - key: SKIP_LISTING_PAGES
+        value: "false"
+      - key: SKIP_SITES_TEXT
+        value: "ajio,ajiio"
+      
+      # Product extraction
+      - key: ENABLE_PRODUCT_INFO
+        value: "true"
+      - key: ENABLE_GENERIC_SCRAPER
+        value: "true"
+      - key: PREFER_INDIAN_URLS
+        value: "true"
+      
+      # Logging
+      - key: LOG_LEVEL
+        value: INFO
+      
+      # Python version
+      - key: PYTHON_VERSION
+        value: "3.11.0"

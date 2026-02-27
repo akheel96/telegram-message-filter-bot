@@ -1,0 +1,13 @@
+# Telegram Loot Filter Bot - Requirements
+
+# Core Telegram library
+telethon>=1.34.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# For cryptography (required by Telethon)
+cryptg>=0.4.0
+
+# Async HTTP client for URL expansion and product info
+aiohttp>=3.9.0
