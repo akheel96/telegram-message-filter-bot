@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from src.config import config
 from src.listener import MessageListener
+from src.admin import setup_admin_routes
 
 # Configure logging - use LOG_LEVEL env var or default to INFO
 log_level = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -102,6 +103,8 @@ async def home(request):
             body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
             .status { color: #28a745; font-weight: bold; }
             .info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+            .admin-link { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; }
+            .admin-link:hover { background: #5a6fd6; }
         </style>
     </head>
     <body>
@@ -109,9 +112,11 @@ async def home(request):
         <p class="status">✅ Bot is running</p>
         <div class="info">
             <p><strong>Health Check:</strong> <code>/health</code></p>
+            <p><strong>Admin Panel:</strong> <code>/admin</code></p>
             <p><strong>Keep-Alive:</strong> Ping <code>/health</code> every 14 minutes to prevent sleep</p>
         </div>
         <p>This bot monitors Telegram channels for deal keywords and forwards filtered messages.</p>
+        <a href="/admin" class="admin-link">⚙️ Open Admin Panel</a>
     </body>
     </html>
     """
@@ -119,10 +124,13 @@ async def home(request):
 
 
 async def start_http_server(port: int = 8080):
-    """Start HTTP server for health checks."""
+    """Start HTTP server for health checks and admin panel."""
     app = web.Application()
     app.router.add_get('/', home)
     app.router.add_get('/health', health_check)
+    
+    # Setup admin panel routes
+    setup_admin_routes(app)
     
     runner = web.AppRunner(app)
     await runner.setup()

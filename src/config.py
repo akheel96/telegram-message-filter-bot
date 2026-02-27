@@ -153,6 +153,65 @@ class Config:
             logger.warning("Destination channel is also a source channel!")
             return False
         return True
+    
+    # ============================================================
+    # Runtime Configuration Methods (for Admin UI)
+    # ============================================================
+    
+    def add_source_channel(self, channel_id: int) -> bool:
+        """Add a source channel at runtime."""
+        if channel_id == self.destination_channel_id:
+            logger.warning(f"Cannot add destination channel as source: {channel_id}")
+            return False
+        if channel_id in self.source_channel_ids:
+            logger.info(f"Channel already in source list: {channel_id}")
+            return False
+        self.source_channel_ids.append(channel_id)
+        logger.info(f"Added source channel: {channel_id}")
+        return True
+    
+    def remove_source_channel(self, channel_id: int) -> bool:
+        """Remove a source channel at runtime."""
+        if channel_id in self.source_channel_ids:
+            self.source_channel_ids.remove(channel_id)
+            logger.info(f"Removed source channel: {channel_id}")
+            return True
+        logger.warning(f"Channel not found in source list: {channel_id}")
+        return False
+    
+    def add_keyword(self, keyword: str) -> bool:
+        """Add a filter keyword at runtime."""
+        keyword = keyword.strip().lower()
+        if not keyword:
+            return False
+        if keyword in self.filter_keywords:
+            logger.info(f"Keyword already exists: {keyword}")
+            return False
+        self.filter_keywords.add(keyword)
+        logger.info(f"Added filter keyword: {keyword}")
+        return True
+    
+    def remove_keyword(self, keyword: str) -> bool:
+        """Remove a filter keyword at runtime."""
+        keyword = keyword.strip().lower()
+        if keyword in self.filter_keywords:
+            self.filter_keywords.discard(keyword)
+            logger.info(f"Removed filter keyword: {keyword}")
+            return True
+        logger.warning(f"Keyword not found: {keyword}")
+        return False
+    
+    def get_runtime_config(self) -> dict:
+        """Get current runtime configuration."""
+        return {
+            "source_channel_ids": self.source_channel_ids.copy(),
+            "destination_channel_id": self.destination_channel_id,
+            "filter_keywords": list(self.filter_keywords),
+            "fast_mode": self.fast_mode,
+            "skip_product_extraction": self.skip_product_extraction,
+            "enable_product_info": self.enable_product_info,
+            "skip_out_of_stock": self.skip_out_of_stock,
+        }
 
 
 # Global config instance

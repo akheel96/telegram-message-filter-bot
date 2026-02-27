@@ -28,6 +28,12 @@ A production-ready Telegram bot that monitors **multiple channels** for deal key
 - 🚫 **Site Filtering** - Skip specific sites (e.g., AJIO)
 - ⚡ **Fast Mode** - Reduced timeouts for time-sensitive deals
 
+### Admin Panel
+- ⚙️ **Web UI** - Simple admin interface at `/admin`
+- ➕ **Add/Remove Channels** - Manage source channels in real-time
+- 🔍 **Add/Remove Keywords** - Update filter keywords without restart
+- 📊 **Live Stats** - View current configuration and statistics
+
 ---
 
 ## 🏗️ Architecture
@@ -118,6 +124,8 @@ python get_ids.py
 
 ### Step 3: Generate String Session
 
+**Important**: You only need to do this **ONCE**. The session remains valid indefinitely.
+
 Run locally to generate a session for cloud deployment:
 
 ```bash
@@ -136,11 +144,19 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your credentials
 
-# Generate StringSession
+# Generate StringSession (ONE-TIME AUTHENTICATION)
 python generate_string_session.py
 ```
 
 **Copy the output string** - you'll need it for Render.
+
+**How Login Works:**
+- ✅ **One-time authentication**: Login once, the session persists forever
+- 📝 **StringSession**: A permanent authentication token (like a permanent login cookie)
+- 🔐 **No re-login needed**: The bot stays logged in 24/7 without any manual intervention
+- 💾 **Session validity**: Remains valid unless you manually log out or revoke the session
+
+You will **NOT** need to re-login or re-authenticate after deployment!
 
 ### Step 4: Deploy to Render (FREE)
 
@@ -194,6 +210,22 @@ Render's free tier sleeps after 15 minutes of inactivity. Use UptimeRobot to kee
 
 3. **Create Monitor** - UptimeRobot will ping your bot every 5 minutes, keeping it awake 24/7!
 
+### Step 6: Use the Admin Panel
+
+Once deployed, you can manage channels and keywords through the web UI:
+
+1. **Open Admin Panel**: `https://your-app-name.onrender.com/admin`
+
+2. **Add/Remove Source Channels**:
+   - Enter channel ID (e.g., `-1001234567890`)
+   - Click "Add Channel" or click ✕ to remove
+
+3. **Add/Remove Filter Keywords**:
+   - Enter keyword (e.g., `deal`, `offer`, `flash`)
+   - Click "Add Keyword" or click ✕ to remove
+
+> ⚠️ **Note**: Changes in the admin panel are **runtime only** and reset when the bot restarts. For permanent changes, update environment variables in Render.
+
 ---
 
 ## ⚙️ Configuration
@@ -236,6 +268,7 @@ telegram-message-filter-bot/
 │   ├── url_handler.py        # URL extraction, expansion, cleaning
 │   ├── product_handler.py    # Product info orchestrator
 │   ├── formatter.py          # Message formatting for Telegram
+│   ├── admin.py              # Admin panel web UI
 │   └── platforms/            # Platform-specific handlers
 │       ├── base.py           # Base class & ProductInfo dataclass
 │       ├── amazon.py         # Amazon scraper
@@ -276,6 +309,45 @@ telegram-message-filter-bot/
 
 ━━━━━━━━━━━━━━━━━━━━━
 ```
+
+---
+
+## ❓ FAQ
+
+### How does authentication work?
+
+**One-time login**: You authenticate once with your phone number and verification code when running `generate_string_session.py`. This creates a permanent session token (StringSession).
+
+**Session persistence**: The StringSession is like a permanent login cookie - it remains valid indefinitely. You set it once as `SESSION_STRING` environment variable on Render and never need to re-login.
+
+**No manual intervention**: Once deployed, the bot stays authenticated 24/7 without requiring any re-login or verification codes.
+
+### How often do I need to login?
+
+**Once. That's it.** 
+
+The session remains valid until you:
+- Manually log out from that session
+- Revoke the session in Telegram settings
+- Delete the `SESSION_STRING` environment variable
+
+### What if my session expires?
+
+This is very rare. If it happens:
+1. Run `python generate_string_session.py` locally again
+2. Update the `SESSION_STRING` in Render
+3. Restart the service
+
+### Will the bot stop working if I restart my local machine?
+
+**No.** Once deployed on Render:
+- The bot runs on Render's servers, not your local machine
+- You can turn off your PC, the bot keeps running
+- StringSession is stored in Render's environment variables
+
+### Does UptimeRobot need to run forever?
+
+**Yes**, but it's automated. Once you set up the UptimeRobot monitor, it automatically pings your bot every 5 minutes. No manual intervention needed - it runs in the background forever.
 
 ---
 
