@@ -1,12 +1,13 @@
 # Render deployment configuration
-# Deploy as FREE Web Service (not Background Worker which is paid)
-# See: https://render.com/docs/blueprint-spec
+# NOTE: Background Worker (type: worker) requires a paid plan on Render ($7/month).
+# See alternatives in CLOUDFLARE_SETUP.md for free hosting options.
+# https://render.com/docs/blueprint-spec
 
 services:
-  - type: web
+  - type: worker
     name: telegram-loot-filter-bot
     runtime: python
-    plan: free
+    plan: starter
     buildCommand: pip install -r requirements.txt
     startCommand: python bot.py
     autoDeploy: true
@@ -22,35 +23,11 @@ services:
         sync: false
       - key: SESSION_STRING
         sync: false
-      
-      # Optional - Keywords to filter (comma-separated)
+
+      # Optional
       - key: FILTER_KEYWORDS
         value: loot,deal,offer
-      
-      # Performance settings
-      - key: FAST_MODE
-        value: "true"
-      - key: HTTP_TIMEOUT
-        value: "15"
-      - key: SKIP_PRODUCT_EXTRACTION
-        value: "false"
-      
-      # Filtering options
-      - key: SKIP_OUT_OF_STOCK
-        value: "true"
-      - key: SKIP_LISTING_PAGES
-        value: "false"
       - key: SKIP_SITES_TEXT
         value: "ajio,ajiio"
-      
-      # Product extraction
-      - key: ENABLE_PRODUCT_INFO
-        value: "true"
-      - key: ENABLE_GENERIC_SCRAPER
-        value: "true"
-      - key: PREFER_INDIAN_URLS
-        value: "true"
-      
-      # Logging
       - key: LOG_LEVEL
         value: INFO

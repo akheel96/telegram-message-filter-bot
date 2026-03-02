@@ -1,0 +1,21 @@
+Last Modified: August 22, 2025
+Your use of the Service is subject to this Acceptable Use Policy. If you are found to be in violation of our policies at any time, as determined by Render in its sole discretion, we may warn you, take down your User Content, or suspend or terminate your account. Please note that we may change our Acceptable Use Policy at any time, and pursuant to the Render Terms of Service ("Terms"), it is your responsibility to keep up-to-date with and adhere to the policies posted here. All capitalized terms used herein have the meanings stated in the Terms, unless stated otherwise.
+
+You agree not to use the Service to:
+
+Scrape, Crawl, or Harvest Data: Scrape, crawl, or harvest data from the Service, or use automated means to access or extract data without Render’s express written consent.
+Engage in Illegal, Harmful, or Fraudulent Activities: Post, transmit, host, or distribute unlawful, abusive, defamatory, hateful, or otherwise objectionable content, including any content that promotes or depicts child sexual exploitation or abuse, or engage in unlawful or harmful activities.
+Abuse Network Resources or Service Capacity: Impose an unreasonable or disproportionately large load on our infrastructure, including intentionally uploading excessive amounts of data or otherwise abusing the Service in a manner that degrades performance for others, especially for the purpose of evading payment or financial obligations.
+Violate Security or Integrity: Attempt to interfere with, compromise the system integrity or security of, or decipher any transmissions to or from the servers running the Service.
+Send Unsolicited Communications: Transmit spam, chain letters, unsolicited bulk email, or other forms of unsolicited messages or advertising.
+Infringe Intellectual Property or Privacy Rights: Infringe upon intellectual property (including copyrights) or privacy rights, or collect personal information from other users without proper consent.
+Resell or Misuse the Service: Resell, rent, lease, or otherwise provide the Service to third parties, use the Service for cryptocurrency mining or other unauthorized commercial purposes, or intentionally misuse the Service to avoid payment or financial responsibility.
+Impersonate or Misrepresent: Impersonate any person or entity, or misrepresent your affiliation or identity.
+Bypass Access or Usage Restrictions: Attempt to bypass, circumvent, or defeat any access or usage restrictions, authentication, or security measures, including using the Service to bypass network restrictions or access non-public services.
+Transmit Malicious Content: Upload, transmit, or distribute viruses, malware, worms, Trojan horses, corrupted files, or any other items intended to damage or interfere with the operation of the Service or any other system, network, or data.
+Enforcement
+We reserve the right to investigate any suspected violation of this Acceptable Use Policy. In the event of a suspected or actual violation, we may, at our sole discretion, remove or disable access to any content, resource, or account that is believed to be in violation of this Policy. You agree to cooperate fully with us in any investigation or enforcement action related to your use of the Service, including providing information and taking any remedial actions we reasonably request.
+
+
+Reporting of Violations
+If you become aware of any violation of this Acceptable Use Policy, you are encouraged to report it to us promptly. Please follow our abuse reporting process by contacting abuse@render.com. We will review all reports and take appropriate action as necessary to protect the integrity and security of the Service.
